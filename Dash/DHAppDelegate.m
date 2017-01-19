@@ -17,6 +17,8 @@
 
 #import "DHAppDelegate.h"
 #import "DHDocsetDownloader.h"
+#import "DHUserRepo.h"
+#import "DHCheatRepo.h"
 #import "DHDocsetTransferrer.h"
 #import "DHDocsetManager.h"
 #import "DHTarixProtocol.h"
@@ -83,6 +85,8 @@
 //    self.window.tintColor = [UIColor purpleColor];
     [DHDocsetDownloader sharedDownloader];
     [DHDocsetTransferrer sharedTransferrer];
+    [DHUserRepo sharedUserRepo];
+    [DHCheatRepo sharedCheatRepo];
     [DHRemoteServer sharedServer];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(clipboardChanged:) name:UIPasteboardChangedNotification object:nil];
     return YES;
@@ -139,6 +143,14 @@
         if(![[DHDocsetDownloader sharedDownloader] alertIfUpdatesAreScheduled])
         {
             [[DHDocsetDownloader sharedDownloader] backgroundCheckForUpdatesIfNeeded];
+            if(![[DHUserRepo sharedUserRepo] alertIfUpdatesAreScheduled])
+            {
+                [[DHUserRepo sharedUserRepo] backgroundCheckForUpdatesIfNeeded];
+                if(![[DHCheatRepo sharedCheatRepo] alertIfUpdatesAreScheduled])
+                {
+                    [[DHCheatRepo sharedCheatRepo] backgroundCheckForUpdatesIfNeeded];
+                }
+            }
         }
     }
 }
@@ -159,6 +171,16 @@
     [[NSOperationQueue mainQueue] addOperationWithBlock:^{
         completionHandler();
     }];
+}
+
+#pragma mark - UIStateRestoration
+
+- (BOOL)application:(UIApplication *)application shouldSaveApplicationState:(NSCoder *)coder {
+    return YES;
+}
+
+- (BOOL)application:(UIApplication *)application shouldRestoreApplicationState:(NSCoder *)coder {
+    return YES;
 }
 
 - (void)setDoNotBackUp
@@ -193,17 +215,17 @@
 - (void)checkCommitHashes
 {
     NSDictionary *hashes = @{@"DHDBSearcher": @"ea3cca9",
-                             @"DHDBResult": @"c44cff7",
+                             @"DHDBResult": @"07b02e3",
                              @"DHDBUnifiedResult": @"b332793",
                              @"DHQueuedDB": @"0199255",
                              @"DHUnifiedQueuedDB": @"dd42266",
                              @"DHDBUnifiedOperation": @"1671a90",
-                             @"DHWebViewController": @"620be6d",
+                             @"DHWebViewController": @"8b1c435",
                              @"DHWebPreferences": @"f3017eb",
-                             @"DHDocsetDownloader": @"53f55ce",
-                             @"PlatformIcons": @"414bef0",
-                             @"DHTypes": @"4e990e4",
-                             @"Types": @"8661bda",
+                             @"DHDocsetDownloader": @"995b73f",
+                             @"PlatformIcons": @"d8b8f25",
+                             @"DHTypes": @"8345e9e",
+                             @"Types": @"8345e9e",
                              @"CSS": @"e7a1182",
                              };
     [hashes enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL *stop) {
